@@ -7,24 +7,40 @@ import (
 	"log"
 	"os"
 	"text/tabwriter"
+
+	fileio "github.com/SamHenderson44/todo/internal/fileIoPackage"
 )
 
+var toDoItems = []ToDoItem{
+	{Item: "ToDo 1", Completed: true},
+	{Item: "ToDo 2", Completed: false},
+	{Item: "ToDo 3", Completed: true},
+	{Item: "ToDo 4", Completed: true},
+	{Item: "ToDo 5", Completed: false},
+	{Item: "ToDo 6", Completed: true},
+	{Item: "ToDo 7", Completed: false},
+	{Item: "ToDo 8", Completed: false},
+	{Item: "ToDo 9", Completed: true},
+	{Item: "ToDo 12", Completed: true},
+}
+
 func main() {
-	toDos := []ToDoItem{
-		{Item: "ToDo 1", Completed: true},
-		{Item: "ToDo 2", Completed: false},
-		{Item: "ToDo 3", Completed: true},
-		{Item: "ToDo 4", Completed: true},
-		{Item: "ToDo 5", Completed: false},
-		{Item: "ToDo 6", Completed: true},
-		{Item: "ToDo 7", Completed: false},
-		{Item: "ToDo 8", Completed: false},
-		{Item: "ToDo 9", Completed: true},
-		{Item: "ToDo 10", Completed: true},
+	dummyFileName := "dummy.json"
+	PrintToDos(os.Stdout, toDoItems...)
+	jsonToDos, _ := CreateJsonToDos(toDoItems...)
+	file, _ := fileio.CreateFile(dummyFileName)
+	fileio.WriteToFile(file, jsonToDos)
+
+	file, err := os.Open(dummyFileName)
+	if err != nil {
+		fmt.Println("error")
 	}
-	PrintToDos(os.Stdout, toDos...)
-	jsontd, _ := CreateJsonToDos(toDos...)
-	fmt.Println(string(jsontd))
+	openedFile, err := fileio.ReadFile(file)
+	if err != nil {
+		fmt.Println("error")
+	}
+
+	PrintJsonToDos(openedFile)
 
 }
 
@@ -48,4 +64,17 @@ func CreateJsonToDos(toDos ...ToDoItem) ([]byte, error) {
 		log.Fatalf("Error marshaling JSON: %v", err)
 	}
 	return jsonToToDos, err
+}
+
+func PrintJsonToDos(toDos []byte) {
+	var unmarshalledToDos []ToDoItem
+	err := json.Unmarshal(toDos, &unmarshalledToDos)
+	if err != nil {
+		fmt.Println("Error unmarshalling JSON:", err)
+		return
+	}
+
+	formattedJson, _ := json.MarshalIndent(unmarshalledToDos, "", "  ")
+
+	fmt.Println(string(formattedJson))
 }
