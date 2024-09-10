@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"text/tabwriter"
 )
@@ -21,11 +23,14 @@ func main() {
 		{Item: "ToDo 10", Completed: true},
 	}
 	PrintToDos(os.Stdout, toDos...)
+	jsontd, _ := CreateJsonToDos(toDos...)
+	fmt.Println(string(jsontd))
+
 }
 
 type ToDoItem struct {
-	Item      string
-	Completed bool
+	Item      string `json:"item"`
+	Completed bool   `json:"completed"`
 }
 
 func PrintToDos(writer io.Writer, toDos ...ToDoItem) {
@@ -35,4 +40,12 @@ func PrintToDos(writer io.Writer, toDos ...ToDoItem) {
 		fmt.Fprintf(tabWriter, "%v\t%v\n", todo.Item, todo.Completed)
 	}
 	tabWriter.Flush()
+}
+
+func CreateJsonToDos(toDos ...ToDoItem) ([]byte, error) {
+	jsonToToDos, err := json.Marshal(toDos)
+	if err != nil {
+		log.Fatalf("Error marshaling JSON: %v", err)
+	}
+	return jsonToToDos, err
 }

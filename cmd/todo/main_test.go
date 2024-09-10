@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-func TestPrintToDos(t *testing.T) {
+var toDos = []ToDoItem{
+	{Item: "Task 1", Completed: true},
+	{Item: "Task 2", Completed: false},
+}
 
-	toDos := []ToDoItem{
-		{Item: "Task 1", Completed: true},
-		{Item: "Task 2", Completed: false},
-	}
+func TestPrintToDos(t *testing.T) {
 	var buffer bytes.Buffer
 
 	t.Run("Prints the tab headings", func(t *testing.T) {
@@ -32,4 +32,15 @@ func TestPrintToDos(t *testing.T) {
 		}
 
 	})
+}
+
+func TestCreateJsonToDos(t *testing.T) {
+	t.Run("successfully marshals to do", func(t *testing.T) {
+		_, err := CreateJsonToDos(toDos...)
+
+		if err != nil {
+			t.Fatalf("Expected no error, got %v", err)
+		}
+	})
+
 }
