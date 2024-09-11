@@ -2,30 +2,31 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
-var data = 0
-
 func main() {
-	go odds()
-	go evens()
+	numbersChannel := make(chan int)
+	var wg sync.WaitGroup
 
-}
+	wg.Add(2)
 
-func odds() {
-	for i := 1; i < 10000; i += 2 {
+	go numberPrinter(numbersChannel, &wg, 0)
+	go numberPrinter(numbersChannel, &wg, 1)
 
-		data = i
-		fmt.Printf("odds %v: \n", i)
+	go func() {
+		wg.Wait()
+		close(numbersChannel)
+	}()
 
+	for data := range numbersChannel {
+		fmt.Printf("Received: %d\n", data)
 	}
 }
 
-func evens() {
-	for i := 0; i < 10000; i += 2 {
-
-		data = i
-		fmt.Printf("even %v: \n", i)
-
+func numberPrinter(data chan int, wg *sync.WaitGroup, startNumber int) {
+	defer wg.Done()
+	for i := startNumber; i < 100; i += 2 {
+		data <- i
 	}
 }
