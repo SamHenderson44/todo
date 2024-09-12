@@ -6,23 +6,20 @@ import (
 	"io"
 	"log"
 	"text/tabwriter"
+
+	store "github.com/SamHenderson44/todo/internal/storePackage"
 )
 
-type ToDoItem struct {
-	Item      string `json:"item"`
-	Completed bool   `json:"completed"`
-}
-
-func PrintToDos(writer io.Writer, toDos ...ToDoItem) {
+func PrintToDos(writer io.Writer, toDos ...store.ToDo) {
 	tabWriter := tabwriter.NewWriter(writer, 20, 0, 1, ' ', 0)
 	fmt.Fprintln(tabWriter, "To Do\tCompleted")
 	for _, todo := range toDos {
-		fmt.Fprintf(tabWriter, "%v\t%v\n", todo.Item, todo.Completed)
+		fmt.Fprintf(tabWriter, "%v\t%v\n", todo.Title, todo.Completed)
 	}
 	tabWriter.Flush()
 }
 
-func CreateJsonToDos(toDos ...ToDoItem) ([]byte, error) {
+func CreateJsonToDos(toDos ...store.ToDo) ([]byte, error) {
 	jsonToToDos, err := json.Marshal(toDos)
 	if err != nil {
 		log.Fatalf("Error marshaling JSON: %v", err)
@@ -31,7 +28,7 @@ func CreateJsonToDos(toDos ...ToDoItem) ([]byte, error) {
 }
 
 func PrintJsonToDos(toDos []byte) {
-	var unmarshalledToDos []ToDoItem
+	var unmarshalledToDos []store.ToDo
 	err := json.Unmarshal(toDos, &unmarshalledToDos)
 	if err != nil {
 		fmt.Println("Error unmarshalling JSON:", err)

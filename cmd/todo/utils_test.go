@@ -3,11 +3,13 @@ package main
 import (
 	"bytes"
 	"testing"
+
+	store "github.com/SamHenderson44/todo/internal/storePackage"
 )
 
-var toDos = []ToDoItem{
-	{Item: "Task 1", Completed: true},
-	{Item: "Task 2", Completed: false},
+var toDos = []store.ToDo{
+	{Title: "Task 1", Completed: true},
+	{Title: "Task 2", Completed: false},
 }
 
 func TestPrintToDos(t *testing.T) {
