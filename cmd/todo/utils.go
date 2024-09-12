@@ -12,9 +12,9 @@ import (
 
 func PrintToDos(writer io.Writer, toDos ...store.ToDo) {
 	tabWriter := tabwriter.NewWriter(writer, 20, 0, 1, ' ', 0)
-	fmt.Fprintln(tabWriter, "To Do\tCompleted")
+	fmt.Fprintln(tabWriter, "ID\tTo Do\tCompleted")
 	for _, todo := range toDos {
-		fmt.Fprintf(tabWriter, "%v\t%v\n", todo.Title, todo.Completed)
+		fmt.Fprintf(tabWriter, "%v\t%v\t%v\n", todo.ID, todo.Title, todo.Completed)
 	}
 	tabWriter.Flush()
 }
