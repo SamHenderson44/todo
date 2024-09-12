@@ -9,13 +9,14 @@ import (
 )
 
 const (
-	NewToDoTextPrompt = "\nWhat do you want to do?"
-	SelectAnOption    = "\nSelect an option:"
+	NewToDoTextPrompt = "What do you want to do?"
+	SelectAnOption    = "Select an option:"
 	AddNewTodo        = "1. Add new to do"
-	InvalidSelection  = "\nInvalid choice, please try again."
+	ShowCurrentToDos  = "2. Show to dos"
+	InvalidSelection  = "Invalid choice, please try again."
 )
 
-func ReadToDoText() {
+var ReadToDoText = func() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	fmt.Println(NewToDoTextPrompt)
@@ -23,7 +24,15 @@ func ReadToDoText() {
 	scanner.Scan()
 	toDoText := strings.TrimSpace(scanner.Text())
 	HandleSaveNewToDo(toDoText)
-	ShowToDoOptions(os.Stdin)
+}
+
+var ShowToDos = func() {
+	toDos := HandleGetToDos()
+	PrintToDos(os.Stdout, toDos...)
+}
+
+var InvalidInput = func() {
+	fmt.Println(InvalidSelection)
 }
 
 func ShowToDoOptions(reader io.Reader) {
@@ -32,16 +41,20 @@ func ShowToDoOptions(reader io.Reader) {
 
 		fmt.Println(SelectAnOption)
 		fmt.Println(AddNewTodo)
+		fmt.Println(ShowCurrentToDos)
 
-		scanner.Scan()
-		choice := strings.TrimSpace(scanner.Text())
+		if !scanner.Scan() {
+			break
+		}
+		selection := strings.TrimSpace(scanner.Text())
 
-		switch choice {
+		switch selection {
 		case "1":
 			ReadToDoText()
-			return
+		case "2":
+			ShowToDos()
 		default:
-			fmt.Println(InvalidSelection)
+			InvalidInput()
 		}
 	}
 }
