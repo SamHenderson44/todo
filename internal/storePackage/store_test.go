@@ -14,9 +14,7 @@ func TestAdd(t *testing.T) {
 
 		got := store.ToDos[0].Title
 
-		if got != newToDo {
-			t.Errorf("got %s want %s", got, newToDo)
-		}
+		assertErrorString(t, got, newToDo)
 	})
 
 	t.Run("Adds correct title", func(t *testing.T) {
@@ -26,9 +24,7 @@ func TestAdd(t *testing.T) {
 
 		got := store.ToDos[0].Title
 
-		if got != newToDo {
-			t.Errorf("got %s want %s", got, newToDo)
-		}
+		assertErrorString(t, got, newToDo)
 	})
 
 	t.Run("Sets the done status to 'false' for new to do", func(t *testing.T) {
@@ -38,9 +34,7 @@ func TestAdd(t *testing.T) {
 		want := false
 		got := store.ToDos[0].Completed
 
-		if got != want {
-			t.Errorf("got %v want %v", got, want)
-		}
+		assertErrorBool(t, got, want)
 
 	})
 }
@@ -50,9 +44,7 @@ func TestVGetToDos(t *testing.T) {
 	store := Store{ToDos: []ToDo{want}}
 	got := store.GetToDos()[0]
 
-	if got != want {
-		t.Errorf("got %v, want %v", got, want)
-	}
+	assertToDo(t, got, want)
 }
 
 func TestGetToDo(t *testing.T) {
@@ -64,9 +56,7 @@ func TestGetToDo(t *testing.T) {
 		got, _ := store.GetToDo(1)
 		want := ToDo{1, "test", false}
 
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		assertToDo(t, got, want)
 
 	})
 	t.Run("Returns error when given invalid ID", func(t *testing.T) {
@@ -87,9 +77,7 @@ func TestDeleteToDo(t *testing.T) {
 		_, err := store.GetToDo(1)
 		want := fmt.Sprintf(ToDoNotFoundError + " 1")
 
-		if err.Error() != want {
-			t.Errorf("got %v, want %v", err.Error(), want)
-		}
+		assertErrorString(t, err.Error(), want)
 
 	})
 	t.Run("Returns an error when given invalid id", func(t *testing.T) {
@@ -109,9 +97,7 @@ func TestUpdateToDo(t *testing.T) {
 		got := store.ToDos[0].Completed
 		want := true
 
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		assertErrorBool(t, got, want)
 	})
 
 	t.Run("Returns an error when given invalid id", func(t *testing.T) {
@@ -131,7 +117,7 @@ func TestResetStore(t *testing.T) {
 	want := 0
 
 	if got != want {
-		t.Errorf("got %v but want %v", got, want)
+		t.Errorf("expected calledCount to be %v, but got %v", got, want)
 	}
 }
 
@@ -139,6 +125,30 @@ func assertError(t testing.TB, got error, want error) {
 	t.Helper()
 
 	if got.Error() != want.Error() {
+		t.Errorf("got %v, want %v", got, want)
+	}
+}
+
+func assertErrorString(t testing.TB, got string, want string) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("expected calledCount to be %s, but got %s", got, want)
+	}
+}
+
+func assertErrorBool(t testing.TB, got bool, want bool) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("expected calledCount to be %v, but got %v", got, want)
+	}
+}
+
+func assertToDo(t testing.TB, got ToDo, want ToDo) {
+	t.Helper()
+
+	if got != want {
 		t.Errorf("got %v, want %v", got, want)
 	}
 }
