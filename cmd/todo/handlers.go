@@ -13,3 +13,19 @@ func HandleGetToDos() []store.ToDo {
 	store := store.GetStore()
 	return store.GetToDos()
 }
+
+func HandleGetToDo(ID int) (store.ToDo, error) {
+	store := store.GetStore()
+	todo, err := store.GetToDo(ID)
+
+	if err != nil {
+		return todo, err
+	}
+
+	return todo, nil
+}
+
+func HandleUpdateToDo(ID int, completed bool) error {
+	store := store.GetStore()
+	return store.UpdateToDo(ID, completed)
+}
