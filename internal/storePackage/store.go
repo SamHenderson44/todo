@@ -13,7 +13,7 @@ type ToDo struct {
 }
 
 type Store struct {
-	toDos []ToDo
+	ToDos []ToDo
 }
 
 var once sync.Once
@@ -24,7 +24,7 @@ const ToDoNotFoundError = "no to do found with ID"
 func GetStore() *Store {
 	once.Do(func() {
 		instance = &Store{
-			toDos: []ToDo{},
+			ToDos: []ToDo{},
 		}
 	})
 	return instance
@@ -32,47 +32,47 @@ func GetStore() *Store {
 
 func (s *Store) Add(title string) {
 	newToDo := ToDo{
-		ID:        len(s.toDos) + 1,
+		ID:        len(s.ToDos) + 1,
 		Title:     title,
 		Completed: false,
 	}
-	s.toDos = append(s.toDos, newToDo)
+	s.ToDos = append(s.ToDos, newToDo)
 }
 
 func (s *Store) GetToDos() []ToDo {
-	return s.toDos
+	return s.ToDos
 }
 
 func (s *Store) GetToDo(ID int) (ToDo, error) {
-	index, err := getIndex(ID, s.toDos)
+	index, err := getIndex(ID, s.ToDos)
 
 	if err != nil {
 		return ToDo{}, err
 	}
 
-	return s.toDos[index], nil
+	return s.ToDos[index], nil
 
 }
 
 func (s *Store) DeleteToDo(ID int) error {
-	index, err := getIndex(ID, s.toDos)
+	index, err := getIndex(ID, s.ToDos)
 
 	if err != nil {
 		return err
 	}
 
-	s.toDos = append(s.toDos[:index], s.toDos[index+1:]...)
+	s.ToDos = append(s.ToDos[:index], s.ToDos[index+1:]...)
 	return nil
 }
 
 func (s *Store) UpdateToDo(ID int, completed bool) error {
-	index, err := getIndex(ID, s.toDos)
+	index, err := getIndex(ID, s.ToDos)
 
 	if err != nil {
 		return err
 	}
 
-	s.toDos[index].Completed = completed
+	s.ToDos[index].Completed = completed
 	return nil
 }
 
@@ -87,4 +87,8 @@ func getIndex(ID int, toDos []ToDo) (int, error) {
 
 	return index, nil
 
+}
+
+func (s *Store) ResetStore() {
+	s.ToDos = nil
 }

@@ -12,7 +12,7 @@ func TestAdd(t *testing.T) {
 		store := Store{}
 		store.Add(newToDo)
 
-		got := store.toDos[0].Title
+		got := store.ToDos[0].Title
 
 		if got != newToDo {
 			t.Errorf("got %s want %s", got, newToDo)
@@ -24,7 +24,7 @@ func TestAdd(t *testing.T) {
 		store := Store{}
 		store.Add(newToDo)
 
-		got := store.toDos[0].Title
+		got := store.ToDos[0].Title
 
 		if got != newToDo {
 			t.Errorf("got %s want %s", got, newToDo)
@@ -36,7 +36,7 @@ func TestAdd(t *testing.T) {
 		store := Store{}
 		store.Add("test")
 		want := false
-		got := store.toDos[0].Completed
+		got := store.ToDos[0].Completed
 
 		if got != want {
 			t.Errorf("got %v want %v", got, want)
@@ -47,7 +47,7 @@ func TestAdd(t *testing.T) {
 
 func TestVGetToDos(t *testing.T) {
 	want := ToDo{1, "test", false}
-	store := Store{toDos: []ToDo{want}}
+	store := Store{ToDos: []ToDo{want}}
 	got := store.GetToDos()[0]
 
 	if got != want {
@@ -56,7 +56,7 @@ func TestVGetToDos(t *testing.T) {
 }
 
 func TestGetToDo(t *testing.T) {
-	store := Store{toDos: []ToDo{
+	store := Store{ToDos: []ToDo{
 		{1, "test", false},
 		{2, "test2", true},
 	}}
@@ -78,7 +78,7 @@ func TestGetToDo(t *testing.T) {
 }
 
 func TestDeleteToDo(t *testing.T) {
-	store := Store{toDos: []ToDo{
+	store := Store{ToDos: []ToDo{
 		{1, "test", false},
 		{2, "test2", true},
 	}}
@@ -101,12 +101,12 @@ func TestDeleteToDo(t *testing.T) {
 }
 
 func TestUpdateToDo(t *testing.T) {
-	store := Store{toDos: []ToDo{
+	store := Store{ToDos: []ToDo{
 		{1, "test", false},
 	}}
 	t.Run("Updates to do", func(t *testing.T) {
 		store.UpdateToDo(1, true)
-		got := store.toDos[0].Completed
+		got := store.ToDos[0].Completed
 		want := true
 
 		if got != want {
@@ -120,6 +120,19 @@ func TestUpdateToDo(t *testing.T) {
 
 		assertError(t, err, want)
 	})
+}
+
+func TestResetStore(t *testing.T) {
+	store := Store{ToDos: []ToDo{
+		{1, "test", false},
+	}}
+	store.ResetStore()
+	got := len(store.GetToDos())
+	want := 0
+
+	if got != want {
+		t.Errorf("got %v but want %v", got, want)
+	}
 }
 
 func assertError(t testing.TB, got error, want error) {
