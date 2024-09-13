@@ -145,6 +145,20 @@ func TestUpdateToDoStatus(t *testing.T) {
 
 }
 
+func TestDeleteToDo(t *testing.T) {
+	store := store.GetStore()
+	store.ResetStore()
+	store.Add("testDelete")
+
+	DeleteToDo(1)
+	want := 0
+	got := len(store.ToDos)
+
+	if got != want {
+		t.Errorf("got %v want %v", got, want)
+	}
+}
+
 var mockFunction = func(calledCount *int) func() {
 	return func() {
 		*calledCount++

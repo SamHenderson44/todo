@@ -17,6 +17,7 @@ const (
 	AddNewTodo         = "1. Add new to do"
 	ShowCurrentToDos   = "2. Show to dos"
 	ChangerToDoStatus  = "3. Change to do status"
+	RemoveToDo         = "4. Delete to do"
 	InvalidSelection   = "Invalid choice, please try again."
 	ChooseToDo         = "Choose a to do to update"
 	ChangeStatusPrompt = "what do you want to change the status to?"
@@ -105,6 +106,11 @@ var UpdateToDoStatus = func(reader io.Reader, toDoId int) {
 
 }
 
+func DeleteToDo(ID int) {
+	store := store.GetStore()
+	store.DeleteToDo(ID)
+}
+
 func ShowToDoOptions(reader io.Reader) {
 	scanner := bufio.NewScanner(reader)
 	for {
@@ -113,6 +119,7 @@ func ShowToDoOptions(reader io.Reader) {
 		fmt.Println(AddNewTodo)
 		fmt.Println(ShowCurrentToDos)
 		fmt.Println(ChangerToDoStatus)
+		fmt.Println(RemoveToDo)
 
 		if !scanner.Scan() {
 			break
@@ -127,6 +134,9 @@ func ShowToDoOptions(reader io.Reader) {
 		case "3":
 			toDoId := GetToDoId(reader, os.Stdout)
 			UpdateToDoStatus(os.Stdin, toDoId)
+		case "4":
+			toDoId := GetToDoId(reader, os.Stdout)
+			DeleteToDo(toDoId)
 		default:
 			InvalidInput()
 		}
