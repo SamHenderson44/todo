@@ -13,27 +13,21 @@ func TestSelectNewToDoStatus(t *testing.T) {
 	t.Run("returns correct input with spaces trimmed", func(t *testing.T) {
 		input := strings.NewReader("1 \n")
 		want := "1"
-
 		got := SelectNewToDoStatus(input)
 
-		if got != want {
-			t.Errorf("got '%s', want  '%s'", got, want)
-		}
+		assertErrorString(t, got, want)
+
 	})
 }
 
 func TestGetToDoId(t *testing.T) {
 	var buffer bytes.Buffer
-	store := store.GetStore()
-	store.Add("testToDo")
+	createTestStore()
 	t.Run("returns the id when a valid choice is made", func(t *testing.T) {
-
 		got := GetToDoId(strings.NewReader("1\n"), &buffer)
 		want := 1
 
-		if got != want {
-			t.Errorf("got %v but want %v", got, want)
-		}
+		assertErrorInt(t, got, want)
 
 	})
 
@@ -43,21 +37,16 @@ func TestGetToDoId(t *testing.T) {
 		got := strings.TrimSpace(buffer.String())
 		want := strings.TrimSpace(UnableToParseError)
 
-		if got != want {
-			t.Errorf("got %s but want %s", got, want)
-		}
+		assertErrorString(t, got, want)
 	})
 
 	t.Run("prompts for valid selection when unknown ID is entered", func(t *testing.T) {
 		buffer.Reset()
-
 		GetToDoId(strings.NewReader("2\n1\n"), &buffer)
 		got := strings.TrimSpace(buffer.String())
 		want := strings.TrimSpace(InvalidSelection)
 
-		if got != want {
-			t.Errorf("got %s but want %s", got, want)
-		}
+		assertErrorString(t, got, want)
 	})
 }
 
@@ -67,17 +56,13 @@ func TestGetToDo(t *testing.T) {
 		toDoId := 1
 		got, _ := GetToDo(toDoId)
 
-		if got.ID != toDoId {
-			t.Errorf("got %v but want %v", got, toDoId)
-		}
+		assertErrorInt(t, got.ID, toDoId)
 	})
 	t.Run("returns error when to do with ID not found", func(t *testing.T) {
 		_, err := GetToDo(2)
 		want := errors.New(store.ToDoNotFoundError + " 2").Error()
 
-		if err.Error() != want {
-			t.Errorf("got %v but want %v", err.Error(), want)
-		}
+		assertErrorString(t, err.Error(), want)
 	})
 }
 
@@ -85,11 +70,10 @@ func TestShowToDoOptions(t *testing.T) {
 	t.Run("Calls ReadToDoText when 1 is entered", func(t *testing.T) {
 		calledCount := 0
 		ReadToDoText = mockFunction(&calledCount)
-
 		input := strings.NewReader("1\n")
 
 		ShowToDoOptions(input)
-		assertError(t, 1, calledCount)
+		assertErrorInt(t, 1, calledCount)
 	})
 	t.Run("Calls ShowToDos when 2 is entered", func(t *testing.T) {
 		calledCount := 0
@@ -98,7 +82,7 @@ func TestShowToDoOptions(t *testing.T) {
 		input := strings.NewReader("2\n")
 
 		ShowToDoOptions(input)
-		assertError(t, 1, calledCount)
+		assertErrorInt(t, 1, calledCount)
 	})
 	t.Run("Checks for invalid input", func(t *testing.T) {
 		calledCount := 0
@@ -107,11 +91,11 @@ func TestShowToDoOptions(t *testing.T) {
 		strings.NewReader("someBadInput\n")
 
 		InvalidInput()
-		assertError(t, 1, calledCount)
+		assertErrorInt(t, 1, calledCount)
 	})
 }
 
-func assertError(t testing.TB, want int, got int) {
+func assertErrorInt(t testing.TB, want int, got int) {
 	t.Helper()
 
 	if got != want {
@@ -119,44 +103,57 @@ func assertError(t testing.TB, want int, got int) {
 	}
 }
 
+func assertErrorString(t testing.TB, want string, got string) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("expected calledCount to be %s, but got %s", got, want)
+	}
+}
+
+func assertErrorBool(t testing.TB, want bool, got bool) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("expected calledCount to be %v, but got %v", got, want)
+	}
+}
+
+func createTestStore() *store.Store {
+	store := store.GetStore()
+	store.ResetStore()
+	store.Add("testThing")
+	return store
+}
+
 func TestUpdateToDoStatus(t *testing.T) {
 	t.Run("sets a to do to complete and back to incomplete", func(t *testing.T) {
-		store := store.GetStore()
-		store.ResetStore()
-		store.Add("testThing")
+		store := createTestStore()
 
 		UpdateToDoStatus(strings.NewReader("1\n"), 1)
 		got, _ := store.GetToDo(1)
 		want := true
 
-		if got.Completed != want {
-			t.Errorf("got %v want %v", got.Completed, want)
-		}
+		assertErrorBool(t, got.Completed, want)
 
 		UpdateToDoStatus(strings.NewReader("2\n"), 1)
 
 		got, _ = store.GetToDo(1)
 		want = false
 
-		if got.Completed != want {
-			t.Errorf("got %v want %v", got.Completed, want)
-		}
+		assertErrorBool(t, got.Completed, want)
 	})
 
 }
 
 func TestDeleteToDo(t *testing.T) {
-	store := store.GetStore()
-	store.ResetStore()
-	store.Add("testDelete")
+	store := createTestStore()
 
 	DeleteToDo(1)
 	want := 0
 	got := len(store.ToDos)
 
-	if got != want {
-		t.Errorf("got %v want %v", got, want)
-	}
+	assertErrorInt(t, got, want)
 }
 
 var mockFunction = func(calledCount *int) func() {
