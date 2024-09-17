@@ -3,6 +3,7 @@ package store
 import (
 	"fmt"
 	"slices"
+	"strings"
 	"sync"
 )
 
@@ -21,6 +22,22 @@ var instance *Store
 
 const ToDoNotFoundError = "no to do found with ID"
 
+// This shouldn't live here - had issues using the ToDo struct type outside
+// of the package though :(
+func FormatToDos(todos []ToDo) string {
+	var builder strings.Builder
+
+	for _, todo := range todos {
+		status := "Incomplete"
+		if todo.Completed {
+			status = "Completed"
+		}
+		builder.WriteString(fmt.Sprintf("ID: %d, Title: %s, Status: %s\n", todo.ID, todo.Title, status))
+	}
+
+	return strings.TrimSpace(builder.String())
+}
+
 func GetStore() *Store {
 	once.Do(func() {
 		instance = &Store{
@@ -33,7 +50,7 @@ func GetStore() *Store {
 func (s *Store) Add(title string) {
 	newToDo := ToDo{
 		ID:        len(s.ToDos) + 1,
-		Title:     title,
+		Title:     strings.TrimSpace(title),
 		Completed: false,
 	}
 	s.ToDos = append(s.ToDos, newToDo)
