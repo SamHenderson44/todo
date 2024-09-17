@@ -1,10 +1,29 @@
 package main
 
-import (
-	"github.com/SamHenderson44/todo/internal/routes"
-)
+// import (
+// 	"flag"
+// 	"os"
+
+// 	"github.com/SamHenderson44/todo/internal/routes"
+// )
 
 func main() {
-	// ShowToDoOptions(os.Stdin)
-	routes.InitRoutes()
+	// climain := flag.Bool("cli", false, "Run cli")
+	// cliconc := flag.Bool("cli", false, "Run cli with concurrency")
+	// web := flag.Bool("web", false, "Run web app")
+
+	CliToDo()
+	// flag.Parse()
+
+	// switch {
+	// case *climain:
+	// 	ShowToDoOptions(os.Stdin)
+	// case *cliconc:
+	// 	CliToDo()
+	// case *web:
+	// 	routes.InitRoutes()
+	// default:
+	// 	ShowToDoOptions(os.Stdin)
+	// }
+
 }
