@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>To Do App</h1>
+    <div>
+      <form action="/todos" method="post">
+        <div>
+          <input type="text" name="toDo" />
+        </div>
+        <div><input type="submit" /></div>
+      </form>
+    </div>
+    <div>
+      <h2>Things that need doing</h2>
+      <ul>
+        {{range .}}
+        <li style="list-style-type: none">
+          <div
+            style="display: flex; justify-content: space-between; width: 500px"
+          >
+            <span>{{.ID}}</span>
+            <span>{{.Title}}</span>
+            <span>{{if .Completed}} Done {{else}}Not Done{{end}}</span>
+          </div>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+  </body>
+</html>

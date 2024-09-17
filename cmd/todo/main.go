@@ -1,7 +1,10 @@
 package main
 
-import "os"
+import (
+	"github.com/SamHenderson44/todo/internal/routes"
+)
 
 func main() {
-	ShowToDoOptions(os.Stdin)
+	// ShowToDoOptions(os.Stdin)
+	routes.InitRoutes()
 }
