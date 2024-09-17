@@ -113,6 +113,14 @@ func TestCreateToDoHandler(t *testing.T) {
 	})
 }
 
+func TestHandleUpdateStatus(t *testing.T) {
+	t.Run("Updates status to true", func(t *testing.T) {})
+	t.Run("Updates status to false", func(t *testing.T) {})
+	t.Run("Returns bad request for invalid id format", func(t *testing.T) {})
+	t.Run("Returns bad request when unable to parse request body", func(t *testing.T) {})
+	t.Run("Returns not found for invalid id", func(t *testing.T) {})
+}
+
 func assertStatusCode(t *testing.T, statusCode int, expectedCode int) {
 	if statusCode != expectedCode {
 		t.Errorf("expected status code %d, got %d", expectedCode, statusCode)
