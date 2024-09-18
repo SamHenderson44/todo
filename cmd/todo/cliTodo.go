@@ -11,9 +11,16 @@ import (
 )
 
 const (
-	MainMenuConst   = "MainMenu"
-	AddNewToDoConst = "addNewToDo"
-	UpdateToDoConst = "updateToDo"
+	MainMenuConst         = "MainMenu"
+	AddNewToDoConst       = "addNewToDo"
+	UpdateToDoConst       = "updateToDo"
+	UpdateHandlerError    = "Error inside update Handler"
+	ChangeToDoStatusError = "Error inside changeToDoStatus"
+	BadInputError         = "Bad input, try again"
+	ChooseToDoStatus      = "Choose a status\n\n1. Complete\n2. Incomplete"
+	ChooseToDoToUpdate    = "Choose a To Do to update:\n\n"
+	AddedNewToDo          = "Added new to do"
+	LineBreak             = "------------"
 )
 
 var mainMenuCh = make(chan bool)
@@ -51,8 +58,8 @@ func mainMenu() {
 		fmt.Println(ShowCurrentToDos)
 		fmt.Println(ChangerToDoStatus)
 		input, _ := reader.ReadString('\n')
-		trimmed := strings.TrimSpace(input)
-		inputCh <- UserInput{inputType: MainMenuConst, input: trimmed}
+		trimmedInput := strings.TrimSpace(input)
+		inputCh <- UserInput{inputType: MainMenuConst, input: trimmedInput}
 	}
 }
 
@@ -69,9 +76,11 @@ func mainMenuHandler(menuSelection string) {
 		<-printingCompleteCh
 		mainMenuCh <- true
 	case "3":
+		// Ran into problems here trying to use a channel to print out the "choose a todo to update" menu and
+		// the subsequent "choose a status to update for the chosen to to".
 		updateHandler()
 	default:
-		printCh <- "Bad input, try again"
+		printCh <- BadInputError
 		<-printingCompleteCh
 		mainMenuCh <- true
 	}
@@ -105,7 +114,7 @@ func addNewToDoMenu() {
 func addNewToDo(newToDoTitle string) {
 	store := store.GetStore()
 	store.Add(newToDoTitle)
-	printCh <- "Added new to do"
+	printCh <- AddedNewToDo
 	<-printingCompleteCh
 	mainMenuCh <- true
 }
@@ -115,14 +124,14 @@ func changeToDoStatus() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for msg := range updateToDoCh {
-		printCh <- "Choose a status\n\n1. Complete\n2. Incomplete"
+		printCh <- ChooseToDoStatus
 		<-printingCompleteCh
 
 		input, _ := reader.ReadString('\n')
 		inputInt, err := strconv.Atoi(strings.TrimSpace(input))
 
 		if err != nil {
-			fmt.Println("Error inside changeToDoStatus")
+			fmt.Println(ChangeToDoStatusError)
 		}
 
 		status := inputInt == 1
@@ -134,9 +143,9 @@ func changeToDoStatus() {
 func updateHandler() {
 
 	toDos := store.GetStore().GetToDos()
-	formatted := store.FormatToDos(toDos)
+	formattedToDos := store.FormatToDos(toDos)
 
-	printCh <- fmt.Sprintf("Choose a To Do to update:\n\n%s", formatted)
+	printCh <- fmt.Sprintf(ChooseToDoToUpdate+"%s", formattedToDos)
 	<-printingCompleteCh
 
 	reader := bufio.NewReader(os.Stdin)
@@ -144,7 +153,7 @@ func updateHandler() {
 	input, _ := reader.ReadString('\n')
 	toDoId, err := strconv.Atoi(strings.TrimSpace(input))
 	if err != nil {
-		fmt.Println("Error inside update Handler")
+		fmt.Println(UpdateHandlerError)
 	}
 	updateToDoCh <- toDoId
 
@@ -152,9 +161,9 @@ func updateHandler() {
 
 func printer() {
 	for msg := range printCh {
-		fmt.Println("\n------------")
+		fmt.Println("\n" + LineBreak)
 		fmt.Println(msg)
-		fmt.Println("------------")
+		fmt.Println(LineBreak)
 		printingCompleteCh <- true
 	}
 }
