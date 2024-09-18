@@ -1,29 +1,30 @@
 package main
 
-// import (
-// 	"flag"
-// 	"os"
+import (
+	"flag"
+	"fmt"
+	"os"
 
-// 	"github.com/SamHenderson44/todo/internal/routes"
-// )
+	"github.com/SamHenderson44/todo/internal/routes"
+)
 
 func main() {
-	// climain := flag.Bool("cli", false, "Run cli")
-	// cliconc := flag.Bool("cli", false, "Run cli with concurrency")
-	// web := flag.Bool("web", false, "Run web app")
 
-	CliToDo()
-	// flag.Parse()
+	cliFlag := flag.Bool("cli", false, "Run cli")
+	webFlag := flag.Bool("web", false, "Web app")
+	cliFlag2 := flag.Bool("cli2", false, "Run cli with concurrency")
 
-	// switch {
-	// case *climain:
-	// 	ShowToDoOptions(os.Stdin)
-	// case *cliconc:
-	// 	CliToDo()
-	// case *web:
-	// 	routes.InitRoutes()
-	// default:
-	// 	ShowToDoOptions(os.Stdin)
-	// }
+	flag.Parse()
+
+	switch {
+	case *cliFlag:
+		ShowToDoOptions(os.Stdin)
+	case *webFlag:
+		routes.InitRoutes()
+	case *cliFlag2:
+		CliToDo()
+	default:
+		fmt.Println("Please provide a valid flag. Use --help to see available options.")
+	}
 
 }

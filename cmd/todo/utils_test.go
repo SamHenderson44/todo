@@ -28,7 +28,6 @@ func TestPrintToDos(t *testing.T) {
 	t.Run("Prints to do items correctly", func(t *testing.T) {
 		buffer.Reset()
 		PrintToDos(&buffer, toDos...)
-		// expected := "To Do               Completed\nTask 1              true\nTask 2              false\n"
 		expected := "ID                  To Do               Completed\n0                   Task 1              true\n0                   Task 2              false\n"
 		if buffer.String() != expected {
 			t.Errorf("Expected output %q, but got %q", expected, buffer.String())
