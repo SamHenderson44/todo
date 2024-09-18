@@ -71,8 +71,8 @@ func mainMenuHandler(menuSelection string) {
 	case "1":
 		newToDoCh <- true
 	case "2":
-		formatted := store.FormatToDos(toDos)
-		printCh <- formatted
+		formattedToDos := store.FormatToDos(toDos)
+		printCh <- formattedToDos
 		<-printingCompleteCh
 		mainMenuCh <- true
 	case "3":
@@ -93,8 +93,6 @@ func handleInput() {
 			mainMenuHandler(msg.input)
 		case AddNewToDoConst:
 			addNewToDo(msg.input)
-		case UpdateToDoConst:
-			updateHandler()
 		default:
 			mainMenuCh <- true
 		}
