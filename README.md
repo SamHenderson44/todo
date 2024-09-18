@@ -8,7 +8,7 @@ Use the below command to run the app. **MUST** be run from the root of the proje
 
 `--cli` cli to do app using in memory store  
 `--web` web app using in memory store  
-`--cli2` basic cli using in memory store (WIP)
+`--cli2` basic cli using in memory store, channels and concurrency (WIP)
 
 Access the web app at [http://localhost:8081/todos](http://localhost:8081/todos).
 
@@ -18,4 +18,6 @@ Access the web app at [http://localhost:8081/todos](http://localhost:8081/todos)
 
 ## Fail
 
-Obviously having 3 copies of `view.html` is awful. Wasted too much time trying to resolve issues of importing when running tests / the app itself :sob:
+Obviously having 3 copies of `view.html` is awful. Wasted too much time trying to resolve issues of importing when running tests / the app itself :sob:.
+
+The store is not safe from race conditions and needs to be changed to make sure it is safe

@@ -61,6 +61,7 @@ func HandleUpdateStatus(w http.ResponseWriter, r *http.Request) {
 	updateErr := store.UpdateToDo(id, payload.Status)
 
 	if updateErr != nil {
+		//TODO: Think I need to change this or Oli might put me in the bin :)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("To Do with ID %d not found", id)))
 		return
