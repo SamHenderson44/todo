@@ -10,6 +10,11 @@ import (
 	store "github.com/SamHenderson44/todo/internal/storePackage"
 )
 
+/*
+	This was a very last minute attempt to get a todo app working using channels and is far from complete.
+	My initial attempt at the app which doesn't use channels / concurrency can be seen in ./cli.go
+*/
+
 const (
 	MainMenuConst         = "MainMenu"
 	AddNewToDoConst       = "addNewToDo"
