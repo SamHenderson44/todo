@@ -53,10 +53,8 @@ func mainMenu() {
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		<-mainMenuCh
-		fmt.Println(SelectAnOption)
-		fmt.Println(AddNewTodo)
-		fmt.Println(ShowCurrentToDos)
-		fmt.Println(ChangerToDoStatus)
+		printMainMenu()
+
 		input, _ := reader.ReadString('\n')
 		trimmedInput := strings.TrimSpace(input)
 		inputCh <- UserInput{inputType: MainMenuConst, input: trimmedInput}
@@ -164,4 +162,12 @@ func printer() {
 		fmt.Println(LineBreak)
 		printingCompleteCh <- true
 	}
+}
+
+func printMainMenu() {
+	printCh <- SelectAnOption + "\n" +
+		AddNewTodo + "\n" +
+		ShowCurrentToDos + "\n" +
+		ChangerToDoStatus
+	<-printingCompleteCh
 }
